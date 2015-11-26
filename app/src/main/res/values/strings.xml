@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SecureCloud</string>
+    <string name="title_activity_register">Register</string>
+    <string name="title_activity_home">Home</string>
+
+    <string-array name="tabs_name">
+        <item>Upload</item>
+        <item>Download</item>
+    </string-array>
+</resources>
