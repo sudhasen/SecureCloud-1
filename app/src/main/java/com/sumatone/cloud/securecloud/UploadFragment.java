@@ -147,8 +147,20 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                         Log.d("longprime", String.valueOf(result[0].longValue()));
                         Log.d("generator", result[1].toString());
                         blindValue = result[0];
-
-                        BigInteger relativePrime=result[0].subtract(BigInteger.valueOf(2));
+                        BigInteger i=result[0].subtract(BigInteger.ONE).divide(BigInteger.valueOf(2));
+                        BigInteger relativePrime=null;
+                        for(BigInteger j=BigInteger.valueOf(2);j.compareTo(result[0])==-1;j=j.add(BigInteger.ONE)){
+                            Log.d("j",j.toString()+"*"+String.valueOf(j.gcd(result[0])==BigInteger.ONE));
+                            if(j.gcd(result[0].subtract(BigInteger.ONE)).toString().equals("1")){
+                                relativePrime=j;
+                                Log.d("relPrime1",j.toString());
+                                break;
+                            }
+                        }
+                        if(relativePrime==null){
+                           relativePrime=result[0].subtract(BigInteger.valueOf(2));
+                            Log.d("relPrime-2",relativePrime.toString());
+                        }
                         //BigInteger nts=result[0].add(BigInteger.valueOf(1)).divide(BigInteger.valueOf(2));
                         long time = System.currentTimeMillis();
                         long afterTime;
@@ -161,12 +173,12 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
                         time = System.currentTimeMillis();
                         String encipheredText = new String(enByte, "UTF-8");
                         Log.d("phEncipher", encipheredText);
-                        /*byte[] deByte = Ciphers.pohligHellmanDecipher(enByte, result[0].subtract(BigInteger.valueOf(2)).modInverse(result[0].subtract(BigInteger.ONE)), result[0]);
+                        byte[] deByte = Ciphers.pohligHellmanDecipher(enByte, relativePrime.modInverse(result[0].subtract(BigInteger.ONE)), result[0]);
                         Log.d("phDecipher", new String(deByte, "UTF-8"));
                         afterTime = System.currentTimeMillis();
                         Log.d("after dec", String.valueOf(afterTime));
                         Log.d("after diff ", String.valueOf(afterTime - time));
-                        */
+
                         int hash = tempFile.getName().hashCode();
                         File f = new File(getActivity().getCacheDir(), nof + "_" + hash + "." + tempFile.getName().substring(tempFile.getName().lastIndexOf(".") + 1));
                         Log.d("newFileName", f.getName());

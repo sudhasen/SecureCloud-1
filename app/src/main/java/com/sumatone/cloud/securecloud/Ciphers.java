@@ -16,7 +16,22 @@ public class Ciphers {
                     ("Enciphering key is not relatively prime to (modulus minus one).");
         byte ba[][] = block(pad(msg, blockSize), blockSize);
         //Begin the enciphering
-        for (int i = 0; i < ba.length; i++) ba[i] = getBytes(new BigInteger(1, ba[i]).modPow(e, p));
+        for (int i = 0; i < ba[i].length; i++) {
+            byte temp[]=new byte[ba[i].length%2==0?ba[i].length/2:(ba[i].length+1)/2];
+            int z=0;
+            for(int j=0;j<ba[i].length;j=j+2){
+
+                temp[z++]=ba[i][j];
+            }
+            temp = getBytes(new BigInteger(1, temp).modPow(e, p));
+
+            int y=0;
+            for(int t=0;t<ba[i].length;t=t+2){
+                y++;
+                if(y<temp.length&&t<ba[i].length)
+                ba[i][t]=temp[y];
+            }
+        }
         //Return to a 1D array.
         //The ciphertext block size is one byte greater than plaintext block size.
         return unBlock(ba, blockSize + 1);
@@ -31,9 +46,27 @@ public class Ciphers {
                     ("Deciphering key is not relatively prime to (modulus minus one).");
         byte[][] ba = block(msg, blockSize);
         //Begin the deciphering
-        for (int i = 0; i < ba.length; i++)
+      /*  for (int i = 0; i < ba.length; i++)
             ba[i] = getBytes(new
-                    BigInteger(1, ba[i]).modPow(d, p));
+                    BigInteger(1, ba[i]).modPow(d, p));*/
+
+        for (int i = 0; i < ba[i].length; i++) {
+            byte temp[]=new byte[ba[i].length%2==0?ba[i].length/2:(ba[i].length+1)/2];
+            int z=0;
+            for(int j=0;j<ba[i].length;j=j+2){
+
+                temp[z++]=ba[i][j];
+            }
+            temp = getBytes(new BigInteger(1, temp).modPow(d, p));
+
+            int y=0;
+            for(int t=0;t<ba[i].length;t=t+2){
+                y++;
+                if(y<temp.length&&t<ba[i].length)
+                    ba[i][t]=temp[y];
+            }
+        }
+
         //Go from blocks to a 1D array, and remove padding;//return this
         return unPad(unBlock(ba, blockSize - 1), blockSize - 1);
     }
@@ -96,7 +129,13 @@ public class Ciphers {
         return paddedMsg;
     }
 
-
+    public static long findGCD(long l1, long l2) {
+        //end recursion
+        if(l2 == 0){
+            return l1;
+        }
+        return findGCD(l2, l1%l2);
+    }
 
 
 //...Other methods
